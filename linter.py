@@ -10,7 +10,32 @@
 
 """This module exports the PhpCsFixer plugin class."""
 
+import os
+
 from SublimeLinter.lint import Linter, util
+
+
+def _find_configuration_file(file_name):
+    if file_name is None:
+        return None
+
+    if not isinstance(file_name, str):
+        return None
+
+    if not len(file_name) > 0:
+        return None
+
+    checked = []
+    check_dir = os.path.dirname(file_name)
+    while check_dir not in checked:
+        configuration_file = os.path.join(check_dir, '.php_cs')
+        if os.path.isfile(configuration_file):
+            return configuration_file
+
+        checked.append(check_dir)
+        check_dir = os.path.dirname(check_dir)
+
+    return None
 
 
 class PhpCsFixer(Linter):
@@ -50,13 +75,18 @@ class PhpCsFixer(Linter):
         if 'config_file' in settings:
             config_file = settings.get('config_file')
         else:
-            config_file = self.config_file
+            config_file = _find_configuration_file(self.view.file_name())
+            if not config_file:
+                config_file = self.config_file
 
         command.append('fix')
         command.append('@')
         command.append('--dry-run')
         command.append('--diff')
+
+        # Note: This option requires php-cs-fixer >= 2.7
         command.append('--diff-format=udiff')
+
         command.append('--using-cache=no')
         command.append('--no-ansi')
         command.append('--config=' + config_file)

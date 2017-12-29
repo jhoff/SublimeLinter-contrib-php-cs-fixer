@@ -9,7 +9,7 @@ The purpose of this plugin is to highlight things that would normally be fixed b
 SublimeLinter 3 must be installed in order to use this plugin. If SublimeLinter 3 is not installed, please follow the instructions [here][installation].
 
 ### Linter installation
-Before using this plugin, you must ensure that `php-cs-fixer` is installed on your system.
+Before using this plugin, you must ensure that `php-cs-fixer >= 2.7` is installed on your system.
 
 ### Linter configuration
 In order for `php-cs-fixer` to be executed by SublimeLinter, you must ensure that its path is available to SublimeLinter. Before going any further, please read and follow the steps in [“Finding a linter executable”](http://sublimelinter.readthedocs.org/en/latest/troubleshooting.html#finding-a-linter-executable) through “Validating your PATH” in the documentation.
