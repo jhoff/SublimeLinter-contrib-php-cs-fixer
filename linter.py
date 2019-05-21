@@ -25,12 +25,14 @@ def _find_configuration_file(file_name):
     if not len(file_name) > 0:
         return None
 
+    candidates = ['.php_cs', '.php_cs.dist']
     checked = []
     check_dir = os.path.dirname(file_name)
     while check_dir not in checked:
-        configuration_file = os.path.join(check_dir, '.php_cs')
-        if os.path.isfile(configuration_file):
-            return configuration_file
+        for candidate in candidates:
+            configuration_file = os.path.join(check_dir, candidate)
+            if os.path.isfile(configuration_file):
+                return configuration_file
 
         checked.append(check_dir)
         check_dir = os.path.dirname(check_dir)
