@@ -43,7 +43,6 @@ def _find_configuration_file(file_name):
 class PhpCsFixer(Linter):
     """Provides an interface to php-cs-fixer."""
 
-    syntax = ('php', 'html')
     cmd = None
     config_file = '.php_cs'
     executable = 'php-cs-fixer'
@@ -53,6 +52,9 @@ class PhpCsFixer(Linter):
         r'[^-+]+[-+]?\s+(?P<error>[^\n]*)'
     )
     multiline = True
+    defaults = {
+        'selector': 'source.php, text.html.basic'
+    }
     tempfile_suffix = 'php'
     error_stream = util.STREAM_STDOUT
 
