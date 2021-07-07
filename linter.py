@@ -31,7 +31,7 @@ def _find_configuration_file(file_name):
 
     checked = []
     check_dir = os.path.dirname(file_name)
-    candidates = ['.php_cs', '.php_cs.dist']
+    candidates = ['.php-cs-fixer.php', '.php-cs-fixer.dist.php', '.php_cs', '.php_cs.dist']
     while check_dir not in checked:
         for candidate in candidates:
             configuration_file = os.path.join(check_dir, candidate)
