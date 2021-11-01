@@ -10,9 +10,13 @@
 
 """This module exports the PhpCsFixer plugin class."""
 
+import logging
 import os
 
 from SublimeLinter.lint import Linter, util
+
+
+logger = logging.getLogger('SublimeLinter.plugin.php-cs-fixer')
 
 
 def _find_configuration_file(file_name):
@@ -25,9 +29,9 @@ def _find_configuration_file(file_name):
     if not len(file_name) > 0:
         return None
 
-    candidates = ['.php_cs', '.php_cs.dist']
     checked = []
     check_dir = os.path.dirname(file_name)
+    candidates = ['.php-cs-fixer.php', '.php-cs-fixer.dist.php', '.php_cs', '.php_cs.dist']
     while check_dir not in checked:
         for candidate in candidates:
             configuration_file = os.path.join(check_dir, candidate)
@@ -43,18 +47,15 @@ def _find_configuration_file(file_name):
 class PhpCsFixer(Linter):
     """Provides an interface to php-cs-fixer."""
 
-    cmd = None
-    config_file = '.php_cs'
-    executable = 'php-cs-fixer'
-    regex = (
-        r'^\s+\d+\)\s+.+\s+\((?P<message>.+)\)[^\@]*'
-        r'@@\s+\-\d+,\d+\s+\+(?P<line>\d+),\d+\s+@@'
-        r'[^-+]+[-+]?\s+(?P<error>[^\n]*)'
-    )
-    multiline = True
     defaults = {
         'selector': 'source.php, text.html.basic'
     }
+    regex = (
+        r'^\s+\d+\)\s+.+\s+\((?P<message>.+)\)[^\@]*'
+        r'\@\@\s+\-\d+,\d+\s+\+(?P<line>\d+),\d+\s+\@\@'
+        r'[^-+]+[-+]?\s+(?P<error>[^\n]*)'
+    )
+    multiline = True
     tempfile_suffix = 'php'
     error_stream = util.STREAM_STDOUT
 
@@ -69,31 +70,29 @@ class PhpCsFixer(Linter):
 
     def cmd(self):
         """Read cmd from inline settings."""
-        settings = Linter.get_view_settings(self)
-
-        if 'cmd' in settings:
-            command = [settings.get('cmd')]
+        if 'cmd' in self.settings:
+            logger.warning('The setting `cmd` has been deprecated. '
+                           'Use `executable` instead.')
+            command = [self.settings.get('cmd')]
         else:
-            command = [self.executable_path]
+            command = ['php-cs-fixer']
 
-        if 'config_file' in settings:
-            config_file = settings.get('config_file')
+        if 'config_file' in self.settings:
+            config_file = self.settings.get('config_file')
         else:
             config_file = _find_configuration_file(self.view.file_name())
             if not config_file:
                 config_file = self.config_file
 
         command.append('fix')
-        command.append('@')
+        command.append('${temp_file}')
         command.append('--dry-run')
-        command.append('--diff')
-
-        # Note: This option requires php-cs-fixer >= 2.7
-        command.append('--diff-format=udiff')
-
+        command.append('--show-progress=none')
+        command.append('--stop-on-violation')
+        command.append('--diff-format=udiff')  # requires php-cs-fixer >= 2.7
         command.append('--using-cache=no')
         command.append('--no-ansi')
-        command.append('--config=' + config_file)
         command.append('-vv')
+        command.append('--config=' + config_file)
 
         return command
