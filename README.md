@@ -28,6 +28,16 @@ To install via Package Control, do the following:
 ## Settings
 For general information on how SublimeLinter works with settings, please see [Settings][settings]. For information on generic linter settings, please see [Linter Settings][linter-settings].
 
+###  PHP-CS-Fixer V2
+
+By default the plugin is configured for PHP-CS-Fixer V3. To enable V2 configure the phpcsfixer linter. Open SublimeLinter settings e.g. via the command palette *Preferences: Sublime Linter: Settings*:
+
+```
+"phpcsfixer": {
+    "version": 2
+}
+```
+
 ## Contributing
 If you would like to contribute enhancements or fixes, please do the following:
 
