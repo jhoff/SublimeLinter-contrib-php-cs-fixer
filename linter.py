@@ -89,7 +89,12 @@ class PhpCsFixer(Linter):
         command.append('--dry-run')
         command.append('--show-progress=none')
         command.append('--stop-on-violation')
-        command.append('--diff-format=udiff')  # requires php-cs-fixer >= 2.7
+
+        if self.settings.get('version') and self.settings.get('version') == 2:
+            command.append('--diff-format=udiff')
+        else:
+            command.append('--diff')
+
         command.append('--using-cache=no')
         command.append('--no-ansi')
         command.append('-vv')
