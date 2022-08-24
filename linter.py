@@ -48,7 +48,7 @@ class PhpCsFixer(Linter):
     """Provides an interface to php-cs-fixer."""
 
     defaults = {
-        'selector': 'source.php, text.html.basic'
+        'selector': 'embedding.php, source.php, text.html.basic'
     }
     regex = (
         r'^\s+\d+\)\s+.+\s+\((?P<message>.+)\)[^\@]*'
